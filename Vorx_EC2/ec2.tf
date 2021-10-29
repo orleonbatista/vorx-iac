@@ -12,7 +12,7 @@ data "aws_subnet" "selected" {
   }
 }
 
-module "meu_sg" {
+module "sg_http" {
   source = "terraform-aws-modules/security-group/aws"
 
   name                = "EC2-SG-HTTP"
@@ -26,13 +26,13 @@ module "meu_sg" {
 module "ec2_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 3.0"
-  name    = "minha-ec2"
+  name    = "jenkins"
 
   ami                    = "ami-087c17d1fe0178315"
   instance_type          = "t2.micro"
   key_name               = "vockey"
   monitoring             = true
-  vpc_security_group_ids = [module.meu_sg.security_group_id]
+  vpc_security_group_ids = [module.sg_http.security_group_id]
   subnet_id              = data.aws_subnet.selected.id
   user_data              = file("./install_dependencies.sh")
   tags = {
